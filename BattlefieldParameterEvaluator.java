@@ -109,9 +109,22 @@ public static void main(String[] args) {
 	BasicNeuralDataSet MyDataSet = new BasicNeuralDataSet(RawInputs, RawOutputs);
 	
 	//Create and train the neural network... 
-	TO DO...
-	System.out.println("Trainingnetwork...");
-	... TO DO ...
+	BasicNetwork  nn = new BasicNetwork();
+	nn.addLayer(new BasicLayer(null, true, NUM_NN_INPUTS));
+	nn.addLayer(new BasicLayer(new ActivationSigmoid(), true, NUM_NN_HIDDEN_UNITS));
+	nn.addLayer(new BasicLayer(new ActivationSigmoid(), false, 1));
+	nn.getStructure().finalizeStructure();
+	nn.reset();
+	
+	System.out.println("Training network...");
+	//TODO NO IDEA WHICH TRAINING FUNCTION TO USE
+		MLTrain train = new Backpropagation(nn, MyDataSet);
+	int epoch = 1 ;
+	do {
+	train.iteration();
+	System.out.println("Epoch #" + epoch + " Error : "+ train.getError());
+	epoch++;
+	} while ( epoch<NUM_TRAINING_EPOCHS) ;
 	System.out.println("Trainingcompleted.");
 	System.out.println("Testingnetwork...");
 	
