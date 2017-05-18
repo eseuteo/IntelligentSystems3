@@ -9,9 +9,11 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 import org.encog.engine.network.activation.ActivationSigmoid;
 import org.encog.ml.data.basic.BasicMLData;
+import org.encog.ml.train.MLTrain;
 import org.encog.neural.data.basic.BasicNeuralDataSet;
 import org.encog.neural.networks.BasicNetwork;
 import org.encog.neural.networks.layers.BasicLayer;
+import org.encog.neural.networks.training.propagation.back.Backpropagation;
 import org.encog.neural.networks.training.propagation.resilient.ResilientPropagation;
 import robocode.BattleResults;
 import robocode.control.*;
@@ -109,9 +111,22 @@ public static void main(String[] args) {
 	BasicNeuralDataSet MyDataSet = new BasicNeuralDataSet(RawInputs, RawOutputs);
 	
 	//Create and train the neural network... 
-	TO DO...
-	System.out.println("Trainingnetwork...");
-	... TO DO ...
+	BasicNetwork  nn = new BasicNetwork();
+	nn.addLayer(new BasicLayer(null, true, NUM_NN_INPUTS));
+	nn.addLayer(new BasicLayer(new ActivationSigmoid(), true, NUM_NN_HIDDEN_UNITS));
+	nn.addLayer(new BasicLayer(new ActivationSigmoid(), false, 1));
+	nn.getStructure().finalizeStructure();
+	nn.reset();
+	
+	System.out.println("Training network...");
+	//TODO NO IDEA WHICH TRAINING FUNCTION TO USE
+		MLTrain train = new Backpropagation(nn, MyDataSet);
+	int epoch = 1 ;
+	do {
+	train.iteration();
+	System.out.println("Epoch #" + epoch + " Error : "+ train.getError());
+	epoch++;
+	} while ( epoch<NUM_TRAINING_EPOCHS) ;
 	System.out.println("Trainingcompleted.");
 	System.out.println("Testingnetwork...");
 	
@@ -131,7 +146,9 @@ public static void main(String[] args) {
 	//Simulate the neural network with the test samples and fill a matrix
 	for(int NdxBattleSize = 0; NdxBattleSize < NUMBATTLEFIELDSIZES; NdxBattleSize++){
 		for(int NdxCooling = 0; NdxCooling < NUMCOOLINGRATES; NdxCooling++){
-			double MyResult = ... MyTestData[NdxCooling + NdxBattleSize * NUMCOOLINGRATES] ...;
+			double output[]=new double[1];
+			nn.compute(MyTestData[NdxCooling + NdxBattleSize * NUMCOOLINGRATES], output);
+			double MyResult = output[0];
 			MyValue = ClipColor(MyResult);
 			MyColor = new Color((float)MyValue, (float)MyValue, (float)MyValue);
 			OutputRGBint[NdxCooling + NdxBattleSize * NUMCOOLINGRATES] = MyColor.getRGB();
@@ -143,7 +160,7 @@ public static void main(String[] args) {
 	for(int NdxSample = 0; NdxSample < NUMSAMPLES; NdxSample++){
 		MyValue = ClipColor(FinalScore1[NdxSample]/250);
 		MyColor = new Color((float)MyValue, (float)MyValue, (float) MyValue);
-		int MyPixelIndex = (int)(Math.round(NUMCOOLINGRATES * ((GunCoolingRate[NdxSample]/MAXGUNCOOLINGRATE) ‐ 0.1)/0.9) + Math.round(NUMBATTLEFIELDSIZES * ((BattlefieldSize[NdxSample]/MAXBATTLEFIELDSIZE) ‐ 0.1)/0.9) * NUMCOOLINGRATES);
+		int MyPixelIndex = (int)(Math.round(NUMCOOLINGRATES * ((GunCoolingRate[NdxSample]/MAXGUNCOOLINGRATE) - 0.1)/0.9) + Math.round(NUMBATTLEFIELDSIZES * ((BattlefieldSize[NdxSample]/MAXBATTLEFIELDSIZE) - 0.1)/0.9) * NUMCOOLINGRATES);
 		if((MyPixelIndex>=0) && (MyPixelIndex < NUMCOOLINGRATES * NUMBATTLEFIELDSIZES)){
 			OutputRGBint[MyPixelIndex] = MyColor.getRGB();
 		}
@@ -186,7 +203,7 @@ public static void main(String[] args) {
 	static class BattleObserver extends BattleAdaptor {
 		//Called when the battle is completed successfully with battle results
 		public void onBattleCompleted(BattleCompletedEvent e){
-			System.out.println("‐‐ Battle has completed ‐‐");
+			System.out.println("-- Battle has completed --");
 			//Get the indexed battle results
 			BattleResults[] results = e.getIndexedResults();
 			//Print out the indexed results with the robot names
@@ -212,4 +229,4 @@ public static void main(String[] args) {
 		public void onBattleError(BattleErrorEvent e){
 			System.out.println("Err>"+ e.getError());
 		}
-	}
+	}}
