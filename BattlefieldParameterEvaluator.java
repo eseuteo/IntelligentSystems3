@@ -31,7 +31,7 @@ public class BattlefieldParameterEvaluator {
 	final static int NUMSAMPLES = 1000; // Number of inputs for the multilayer perceptron (size of the input vectors)
 	final static int NUM_NN_INPUTS = 2; // Number of hidden neurons of the neural network
 	final static int NUM_NN_HIDDEN_UNITS = 50; // Number of epochs for training
-	final static int NUM_TRAINING_EPOCHS = 100000;
+	final static int NUM_TRAINING_EPOCHS = 10000;
 	
 	static int NdxBattle;
 	
@@ -60,7 +60,7 @@ public static void main(String[] args) {
 	
 	// Setup the battle specification
 	// Setup battle parameters 
-	int numberOfRounds =1;
+	int numberOfRounds =5;
 	long inactivityTime = 100;
 
 	int sentryBorderSize = 50;
@@ -92,10 +92,10 @@ public static void main(String[] args) {
 	}
 	//Cleanup our RobocodeEngine
 	engine.close();
-	System.out.println(Arrays.toString(BattlefieldSize));
-	System.out.println(Arrays.toString(GunCoolingRate));
-	System.out.println(Arrays.toString(FinalScore1));
-	System.out.println(Arrays.toString(FinalScore2));
+//	System.out.println(Arrays.toString(BattlefieldSize));
+//	System.out.println(Arrays.toString(GunCoolingRate));
+//	System.out.println(Arrays.toString(FinalScore1));
+//	System.out.println(Arrays.toString(FinalScore2));
 	
 	//Create the training dataset for the neural network
 	double[][] RawInputs = new double[NUMSAMPLES][NUM_NN_INPUTS];
@@ -105,7 +105,7 @@ public static void main(String[] args) {
 	// IMPORTANT:normalize the inputs and the outputs to the interval [0,1]
 		RawInputs[NdxSample][0] = BattlefieldSize[NdxSample]/MAXBATTLEFIELDSIZE;
 		RawInputs[NdxSample][1] = GunCoolingRate[NdxSample]/MAXGUNCOOLINGRATE;
-		RawOutputs[NdxSample][0] = FinalScore1[NdxSample]/250;
+		RawOutputs[NdxSample][0] = FinalScore2[NdxSample]/(250*5);
 	}
 	
 	BasicNeuralDataSet MyDataSet = new BasicNeuralDataSet(RawInputs, RawOutputs);
@@ -124,7 +124,7 @@ public static void main(String[] args) {
 	int epoch = 1 ;
 	do {
 	train.iteration();
-	System.out.println("Epoch #" + epoch + " Error : "+ train.getError());
+	//System.out.println("Epoch #" + epoch + " Error : "+ train.getError());
 	epoch++;
 	} while ( epoch<NUM_TRAINING_EPOCHS) ;
 	System.out.println("Trainingcompleted.");
@@ -158,7 +158,7 @@ public static void main(String[] args) {
 	
 	//Plot the training samples7
 	for(int NdxSample = 0; NdxSample < NUMSAMPLES; NdxSample++){
-		MyValue = ClipColor(FinalScore1[NdxSample]/250);
+		MyValue = ClipColor(FinalScore1[NdxSample]/(250*5));
 		MyColor = new Color((float)MyValue, (float)MyValue, (float) MyValue);
 		int MyPixelIndex = (int)(Math.round(NUMCOOLINGRATES * ((GunCoolingRate[NdxSample]/MAXGUNCOOLINGRATE) - 0.1)/0.9) + Math.round(NUMBATTLEFIELDSIZES * ((BattlefieldSize[NdxSample]/MAXBATTLEFIELDSIZE) - 0.1)/0.9) * NUMCOOLINGRATES);
 		if((MyPixelIndex>=0) && (MyPixelIndex < NUMCOOLINGRATES * NUMBATTLEFIELDSIZES)){
@@ -203,14 +203,14 @@ public static void main(String[] args) {
 	static class BattleObserver extends BattleAdaptor {
 		//Called when the battle is completed successfully with battle results
 		public void onBattleCompleted(BattleCompletedEvent e){
-			System.out.println("-- Battle has completed --");
+		//	System.out.println("-- Battle has completed --");
 			//Get the indexed battle results
 			BattleResults[] results = e.getIndexedResults();
 			//Print out the indexed results with the robot names
-			System.out.println("Battleresults:");
+			//System.out.println("Battleresults:");
 			
 			for (BattleResults result : results){
-				System.out.println(" " + result.getTeamLeaderName() + ": " + result.getScore());
+				//System.out.println(" " + result.getTeamLeaderName() + ": " + result.getScore());
 			}
 			
 			//Store the scores of the robots
