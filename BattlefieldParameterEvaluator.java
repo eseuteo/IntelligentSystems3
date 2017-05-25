@@ -34,7 +34,7 @@ public class BattlefieldParameterEvaluator {
 	final static int NUM_NN_HIDDEN_UNITS = 50; // Number of epochs for training
 	final static int NUM_TRAINING_EPOCHS = 100000;
 	
-	final static int MIN_TRAINING_EPOCHS = 500;
+	final static int MIN_TRAINING_EPOCHS = 50;
 	static int NdxBattle;
 	
 	static double[] FinalScore1;
