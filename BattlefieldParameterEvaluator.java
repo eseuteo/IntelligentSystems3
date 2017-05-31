@@ -154,7 +154,7 @@ public class BattlefieldParameterEvaluator {
 			if (err > previousErr) {
 				limit--;
 			} else {
-				limit = 3;
+				limit = 10;
 				if(err< bestErr){
 					bestErr = err;
 					topNN = (BasicNetwork) nn.clone();
